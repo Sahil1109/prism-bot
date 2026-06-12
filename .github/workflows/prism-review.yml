@@ -19,7 +19,7 @@ on:
         description: Score threshold for auto-approval (0 to disable)
         required: false
         type: number
-        default: 80
+        default: 0
     secrets:
       ANTHROPIC_API_KEY:
         required: true

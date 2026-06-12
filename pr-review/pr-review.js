@@ -183,7 +183,7 @@ async function main() {
     console.log(`Comment posted: ${commentUrl}`);
   }
 
-  if (approveThreshold !== null) {
+  if (approveThreshold !== null && approveThreshold > 0) {
     const isCritical = result.severity === 'critical';
     const isMisaligned = result.business_alignment === 'misaligned';
     const scoreOk = result.score >= approveThreshold;
