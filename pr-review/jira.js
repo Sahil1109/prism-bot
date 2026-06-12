@@ -19,8 +19,8 @@ async function fetchJiraTicket(ticketKey) {
 
   if (!res.ok) {
     const body = await res.text();
-    console.error(`Jira API error ${res.status}: ${body}`);
-    process.exit(1);
+    console.warn(`Jira API error ${res.status}: ${body} — skipping Jira context.`);
+    return null;
   }
 
   const data = await res.json();

@@ -20,7 +20,7 @@ const { fetchPRDiff, postPRComment, approvePR, PRISM_SIGNATURE } = require('./gi
 const { fetchJiraTicket } = require('./jira');
 const { reviewWithClaude } = require('./claude');
 
-const REQUIRED_ENV = ['JIRA_EMAIL', 'JIRA_TOKEN', 'GITHUB_TOKEN', 'ANTHROPIC_API_KEY'];
+const REQUIRED_ENV = ['GITHUB_TOKEN', 'ANTHROPIC_API_KEY'];
 const PRISM_REPO_URL = 'https://github.com/redbellynetwork/prism-bot';
 
 const SEVERITY_EMOJI = { critical: '🔴', high: '🟠', medium: '🟡', low: '🟢' };
@@ -140,9 +140,11 @@ async function main() {
   const jiraKey = extractJiraKey(pr.branch) || extractJiraKey(pr.title);
 
   let ticket = null;
-  if (jiraKey) {
+  if (jiraKey && process.env.JIRA_EMAIL && process.env.JIRA_TOKEN) {
     console.log(`Found Jira key: ${jiraKey} — fetching ticket...`);
     ticket = await fetchJiraTicket(jiraKey);
+  } else if (jiraKey) {
+    console.warn(`Jira key found (${jiraKey}) but JIRA_EMAIL/JIRA_TOKEN not set — skipping.`);
   } else {
     console.warn('No Jira key found in branch name or PR title — skipping business alignment.');
   }
