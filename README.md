@@ -47,6 +47,7 @@ jobs:
 | `repo` | yes | — | GitHub repo name |
 | `pull_number` | yes | — | PR number |
 | `approve_threshold` | no | `0` | Score (0–100) required for auto-approval. `0` = disabled |
+| `enable_jira` | no | `false` | Enable Jira ticket lookup and business alignment scoring |
 
 ### Secrets
 
@@ -101,6 +102,9 @@ npm run review -- <owner> <repo> <pull_number> --comment
 
 # Review + post comment + auto-approve at threshold 80
 npm run review -- <owner> <repo> <pull_number> --comment --approve=80
+
+# Review with Jira business alignment
+npm run review -- <owner> <repo> <pull_number> --comment --jira
 
 # Clean up old PRism comments (keep 2 most recent)
 npm run cleanup -- <owner> <repo> <pull_number> --keep=2

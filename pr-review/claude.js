@@ -45,27 +45,36 @@ ${patch || "(binary or no diff)"}`;
 }
 
 function buildReviewPrompt(diffOrSummary, ticket) {
-  const description = ticket
-    ? ticket.description || "(none)"
-    : "(Jira ticket not found)";
-  const summary = ticket
-    ? ticket.summary || "(none)"
-    : "(Jira ticket not found)";
-  const key = ticket ? ticket.key : "N/A";
-
-  return `You are a senior code reviewer. Review the following PR diff against the Jira ticket requirements.
-
-=== JIRA TICKET: ${key} ===
-Title: ${summary}
-Description & Acceptance Criteria:
-${description}
+  if (!ticket) {
+    return `You are a senior code reviewer. Review the following PR diff for code quality only. There is no Jira ticket — do not factor business alignment into the score.
 
 === PR DIFF ===
 ${diffOrSummary}
 
 Return ONLY a JSON object with this exact structure:
 {
-  "severity": "critical" | "major" | "minor",
+  "severity": "critical" | "high" | "medium" | "low",
+  "business_alignment": "skipped",
+  "missing_requirements": [],
+  "code_issues": ["<code-level concern>"],
+  "score": <0-100>,
+  "summary": "<2-3 sentence human-readable review>"
+}`;
+  }
+
+  return `You are a senior code reviewer. Review the following PR diff against the Jira ticket requirements.
+
+=== JIRA TICKET: ${ticket.key} ===
+Title: ${ticket.summary || "(none)"}
+Description & Acceptance Criteria:
+${ticket.description || "(none)"}
+
+=== PR DIFF ===
+${diffOrSummary}
+
+Return ONLY a JSON object with this exact structure:
+{
+  "severity": "critical" | "high" | "medium" | "low",
   "business_alignment": "aligned" | "partial" | "misaligned",
   "missing_requirements": ["<AC not addressed>"],
   "code_issues": ["<code-level concern>"],

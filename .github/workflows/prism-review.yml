@@ -20,6 +20,11 @@ on:
         required: false
         type: number
         default: 0
+      enable_jira:
+        description: Enable Jira ticket lookup and business alignment scoring
+        required: false
+        type: boolean
+        default: false
     secrets:
       ANTHROPIC_API_KEY:
         required: true
@@ -63,7 +68,8 @@ jobs:
             ${{ inputs.repo }} \
             ${{ inputs.pull_number }} \
             --comment \
-            --approve=${{ inputs.approve_threshold }}
+            --approve=${{ inputs.approve_threshold }} \
+            ${{ inputs.enable_jira && '--jira' || '' }}
 
       - name: Delete old PRism comments
         env:

@@ -120,6 +120,7 @@ async function main() {
 
   const args = process.argv.slice(2);
   const commentFlag = args.includes('--comment');
+  const jiraFlag = args.includes('--jira');
   const approveArg = args.find(a => a.startsWith('--approve'));
   const approveThreshold = approveArg
     ? parseInt(approveArg.split('=')[1] ?? '80', 10)
@@ -127,7 +128,7 @@ async function main() {
   const positional = args.filter(a => !a.startsWith('--'));
 
   if (positional.length < 3) {
-    console.error('Usage: node pr-review.js <owner> <repo> <pull_number> [--comment] [--approve=80]');
+    console.error('Usage: node pr-review.js <owner> <repo> <pull_number> [--comment] [--approve=80] [--jira]');
     process.exit(1);
   }
 
@@ -137,22 +138,23 @@ async function main() {
   console.log(`\nFetching PR #${pullNumber} from ${owner}/${repo}...`);
   const pr = await fetchPRDiff(owner, repo, pullNumber);
 
-  const jiraKey = extractJiraKey(pr.branch) || extractJiraKey(pr.title);
-
   let ticket = null;
-  if (jiraKey && process.env.JIRA_EMAIL && process.env.JIRA_TOKEN) {
-    console.log(`Found Jira key: ${jiraKey} — fetching ticket...`);
-    ticket = await fetchJiraTicket(jiraKey);
-  } else if (jiraKey) {
-    console.warn(`Jira key found (${jiraKey}) but JIRA_EMAIL/JIRA_TOKEN not set — skipping.`);
-  } else {
-    console.warn('No Jira key found in branch name or PR title — skipping business alignment.');
+  if (jiraFlag) {
+    const jiraKey = extractJiraKey(pr.branch) || extractJiraKey(pr.title);
+    if (jiraKey && process.env.JIRA_EMAIL && process.env.JIRA_TOKEN) {
+      console.log(`Found Jira key: ${jiraKey} — fetching ticket...`);
+      ticket = await fetchJiraTicket(jiraKey);
+    } else if (jiraKey) {
+      console.warn(`Jira key found (${jiraKey}) but JIRA_EMAIL/JIRA_TOKEN not set — skipping alignment.`);
+    } else {
+      console.warn('--jira set but no Jira key found in branch name or PR title — skipping alignment.');
+    }
   }
 
   console.log('Sending to Claude for review...\n');
   const result = await reviewWithClaude(pr.diff, ticket, pr.files);
 
-  if (!jiraKey) result.business_alignment = 'skipped';
+  if (!ticket) result.business_alignment = 'skipped';
 
   console.log('═'.repeat(50));
   console.log('  PR REVIEW RESULT');
