@@ -21,9 +21,6 @@ on:
         type: number
         default: 80
     secrets:
-      GITHUB_TOKEN:
-        description: Caller repo token (for posting comments and approvals)
-        required: true
       ANTHROPIC_API_KEY:
         required: true
       JIRA_EMAIL:
@@ -57,7 +54,7 @@ jobs:
         env:
           JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         working-directory: pr-review
         run: |
@@ -70,7 +67,7 @@ jobs:
 
       - name: Delete old PRism comments
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         working-directory: pr-review
         run: |
           npm run cleanup -- \
