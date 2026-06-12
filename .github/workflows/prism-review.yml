@@ -1,0 +1,80 @@
+name: PRism Review (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      owner:
+        description: GitHub repo owner
+        required: true
+        type: string
+      repo:
+        description: GitHub repo name
+        required: true
+        type: string
+      pull_number:
+        description: Pull request number
+        required: true
+        type: string
+      approve_threshold:
+        description: Score threshold for auto-approval (0 to disable)
+        required: false
+        type: number
+        default: 80
+    secrets:
+      GITHUB_TOKEN:
+        description: Caller repo token (for posting comments and approvals)
+        required: true
+      ANTHROPIC_API_KEY:
+        required: true
+      JIRA_EMAIL:
+        required: false
+      JIRA_TOKEN:
+        required: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout PRism
+        uses: actions/checkout@v4.2.2
+        with:
+          repository: redbellynetwork/prism-bot
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: pr-review
+        run: npm install
+
+      - name: Run PR review
+        env:
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        working-directory: pr-review
+        run: |
+          npm run review -- \
+            ${{ inputs.owner }} \
+            ${{ inputs.repo }} \
+            ${{ inputs.pull_number }} \
+            --comment \
+            --approve=${{ inputs.approve_threshold }}
+
+      - name: Delete old PRism comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: pr-review
+        run: |
+          npm run cleanup -- \
+            ${{ inputs.owner }} \
+            ${{ inputs.repo }} \
+            ${{ inputs.pull_number }} \
+            --keep=2

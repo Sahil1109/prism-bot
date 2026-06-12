@@ -1,0 +1,15 @@
+{
+  "name": "prism-pr-review",
+  "version": "1.0.0",
+  "description": "PRism — automated PR scoring against Jira acceptance criteria",
+  "main": "pr-review.js",
+  "scripts": {
+    "review": "node pr-review.js",
+    "review:comment": "node pr-review.js --comment",
+    "review:full": "node pr-review.js --comment --approve=80",
+    "cleanup": "node cleanup.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
