@@ -21,7 +21,7 @@ const { fetchJiraTicket } = require('./jira');
 const { reviewWithClaude } = require('./claude');
 
 const REQUIRED_ENV = ['GITHUB_TOKEN', 'ANTHROPIC_API_KEY'];
-const PRISM_REPO_URL = 'https://github.com/Sahil1109/prism-bot';
+const PRISM_REPO_URL = 'https://github.com/redbellynetwork/prism-bot';
 
 const SEVERITY_EMOJI = { critical: '🔴', high: '🟠', medium: '🟡', low: '🟢' };
 const ALIGNMENT_EMOJI = { aligned: '✅', misaligned: '❌', partial: '🔶', skipped: '⏭️', unknown: '❓' };

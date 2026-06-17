@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: Sahil1109/prism-bot/.github/workflows/prism-review.yml@main
+    uses: redbellynetwork/prism-bot/.github/workflows/prism-review.yml@v1
     with:
       owner: ${{ github.repository_owner }}
       repo: ${{ github.event.repository.name }}

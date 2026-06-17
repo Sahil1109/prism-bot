@@ -44,7 +44,7 @@ jobs:
       - name: Checkout PRism
         uses: actions/checkout@v4.2.2
         with:
-          repository: Sahil1109/prism-bot
+          repository: redbellynetwork/prism-bot
 
       - name: Setup Node.js
         uses: actions/setup-node@v4.4.0
