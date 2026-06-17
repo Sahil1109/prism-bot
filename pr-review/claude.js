@@ -37,6 +37,11 @@ const REVIEW_TOOL = {
         type: "string",
         description: "2-3 sentence human-readable review summary",
       },
+      rollback_guide: {
+        type: "array",
+        items: { type: "string" },
+        description: "3-5 triage steps for oncall if prod breaks after this PR merges. Each step names a specific file, service, or metric to check and why it is at risk. Be concrete — reference actual filenames and changed behaviour from the diff.",
+      },
     },
     required: [
       "severity",
@@ -45,6 +50,7 @@ const REVIEW_TOOL = {
       "code_issues",
       "score",
       "summary",
+      "rollback_guide",
     ],
   },
 };
@@ -133,6 +139,12 @@ ${patch || "(binary or no diff)"}`;
   return { filename, summary };
 }
 
+const ROLLBACK_GUIDANCE = `Rollback guide rules:
+- Write 3-5 steps an oncall engineer should check if prod breaks after this PR merges.
+- Each step must name a specific file, service, database table, metric, or external dependency from the diff and explain why it is at risk.
+- Order by likelihood of failure, highest first.
+- If the diff has no prod risk (docs-only, test-only, config comments), return a single step: "Low-risk change — no specific triage needed."`;
+
 const REVIEWER_GUIDANCE = `Reviewer ground rules:
 - Only flag issues you can verify in the diff. Do not assume problems that contradict what the code shows.
 - GitHub Actions: secrets marked "required: false" are optional — callers are not forced to pass them. Do not flag unused optional secrets as a security issue.
@@ -147,6 +159,8 @@ function buildReviewPrompt(diffOrSummary, ticket) {
 
 ${REVIEWER_GUIDANCE}
 
+${ROLLBACK_GUIDANCE}
+
 ${SCORING_RUBRIC}
 
 === PR DIFF ===
@@ -156,6 +170,8 @@ ${diffOrSummary}`;
   return `You are a senior code reviewer. Review the following PR diff against the Jira ticket requirements.
 
 ${REVIEWER_GUIDANCE}
+
+${ROLLBACK_GUIDANCE}
 
 ${SCORING_RUBRIC}
 

@@ -71,6 +71,15 @@ function formatComment(result, owner, repo, pullNumber) {
     result.summary,
   ];
 
+  if (result.rollback_guide?.length) {
+    lines.push(
+      '',
+      `### 🚨 If this breaks in prod`,
+      '',
+      ...result.rollback_guide.map((step, i) => `${i + 1}. ${step}`),
+    );
+  }
+
   if (result.missing_requirements?.length) {
     lines.push(
       '',
@@ -173,6 +182,11 @@ async function main() {
   if (result.code_issues?.length) {
     console.log('\n  Code Issues:');
     result.code_issues.forEach(i => console.log(`    • ${i}`));
+  }
+
+  if (result.rollback_guide?.length) {
+    console.log('\n  If this breaks in prod:');
+    result.rollback_guide.forEach((s, i) => console.log(`    ${i + 1}. ${s}`));
   }
 
   console.log('═'.repeat(50));
