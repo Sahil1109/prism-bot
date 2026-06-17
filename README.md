@@ -1,5 +1,9 @@
 # PRism Bot
 
+[![Release](https://img.shields.io/github/v/release/redbellynetwork/prism-bot?style=flat-square)](https://github.com/redbellynetwork/prism-bot/releases)
+[![License](https://img.shields.io/github/license/redbellynetwork/prism-bot?style=flat-square)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D24-brightgreen?style=flat-square)](https://nodejs.org)
+
 AI-powered PR reviewer. Scores pull requests against Jira acceptance criteria using Claude, posts a structured review comment, and optionally auto-approves.
 
 ## How it works
@@ -35,27 +39,27 @@ jobs:
       # approve_threshold: 80   # uncomment to enable auto-approval
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}     # optional
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}     # optional
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }} # optional
+      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }} # optional
 ```
 
 ### Inputs
 
-| Input | Required | Default | Description |
-|---|---|---|---|
-| `owner` | yes | — | GitHub repo owner |
-| `repo` | yes | — | GitHub repo name |
-| `pull_number` | yes | — | PR number |
-| `approve_threshold` | no | `0` | Score (0–100) required for auto-approval. `0` = disabled |
-| `enable_jira` | no | `false` | Enable Jira ticket lookup and business alignment scoring |
+| Input               | Required | Default | Description                                              |
+| ------------------- | -------- | ------- | -------------------------------------------------------- |
+| `owner`             | yes      | —       | GitHub repo owner                                        |
+| `repo`              | yes      | —       | GitHub repo name                                         |
+| `pull_number`       | yes      | —       | PR number                                                |
+| `approve_threshold` | no       | `0`     | Score (0–100) required for auto-approval. `0` = disabled |
+| `enable_jira`       | no       | `false` | Enable Jira ticket lookup and business alignment scoring |
 
 ### Secrets
 
-| Secret | Required | Description |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | yes | Anthropic API key |
-| `JIRA_EMAIL` | no | Atlassian account email |
-| `JIRA_TOKEN` | no | Atlassian API token |
+| Secret              | Required | Description             |
+| ------------------- | -------- | ----------------------- |
+| `ANTHROPIC_API_KEY` | yes      | Anthropic API key       |
+| `JIRA_EMAIL`        | no       | Atlassian account email |
+| `JIRA_TOKEN`        | no       | Atlassian API token     |
 
 `GITHUB_TOKEN` is provided automatically — do not pass it.
 
@@ -64,6 +68,7 @@ jobs:
 Disabled by default. Enable by setting `approve_threshold` (e.g. `80`).
 
 PR is auto-approved only when **all** of:
+
 - Score ≥ threshold
 - Severity is not `critical`
 - Business alignment is not `misaligned`
@@ -121,4 +126,4 @@ JIRA_TOKEN=          # optional
 
 ## Requirements
 
-- Node.js >= 18
+- Node.js >= 24
