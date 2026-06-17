@@ -14,18 +14,23 @@ async function fetchPRDiff(owner, repo, pullNumber) {
 
   const pr = await prRes.json();
 
-  const filesRes = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/pulls/${pullNumber}/files?per_page=100`,
-    { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } }
-  );
-
-  if (!filesRes.ok) {
-    const body = await filesRes.text();
-    console.error(`GitHub API error ${filesRes.status}: ${body}`);
-    process.exit(1);
+  const files = [];
+  let page = 1;
+  while (true) {
+    const filesRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/pulls/${pullNumber}/files?per_page=100&page=${page}`,
+      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } }
+    );
+    if (!filesRes.ok) {
+      const body = await filesRes.text();
+      console.error(`GitHub API error ${filesRes.status}: ${body}`);
+      process.exit(1);
+    }
+    const batch = await filesRes.json();
+    files.push(...batch);
+    if (batch.length < 100) break;
+    page++;
   }
-
-  const files = await filesRes.json();
 
   const diff = files
     .map(f => `--- ${f.filename}\n${f.patch || '(binary or no diff)'}`)

@@ -64,11 +64,11 @@ jobs:
         working-directory: pr-review
         run: |
           npm run review -- \
-            ${{ inputs.owner }} \
-            ${{ inputs.repo }} \
-            ${{ inputs.pull_number }} \
+            "${{ inputs.owner }}" \
+            "${{ inputs.repo }}" \
+            "${{ inputs.pull_number }}" \
             --comment \
-            --approve=${{ inputs.approve_threshold }} \
+            "--approve=${{ inputs.approve_threshold }}" \
             ${{ inputs.enable_jira && '--jira' || '' }}
 
       - name: Delete old PRism comments

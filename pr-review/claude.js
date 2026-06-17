@@ -1,5 +1,5 @@
-const MODEL = "claude-sonnet-4-5";
-const LARGE_DIFF_THRESHOLD = 100;
+const MODEL = "claude-sonnet-4-6";
+const LARGE_DIFF_THRESHOLD = 300;
 
 function countDiffLines(diff) {
   return diff.split("\n").filter((l) => l.startsWith("+") || l.startsWith("-"))
