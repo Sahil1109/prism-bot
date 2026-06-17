@@ -127,3 +127,7 @@ JIRA_TOKEN=          # optional
 ## Requirements
 
 - Node.js >= 24
+
+## Changelog
+
+See [GitHub Releases](https://github.com/redbellynetwork/prism-bot/releases).
