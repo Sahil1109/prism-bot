@@ -1,0 +1,21 @@
+name: Bug Report
+description: PRism crashed, failed, or posted a broken comment
+labels: ["bug"]
+body:
+  - type: input
+    id: pr
+    attributes:
+      label: PR link
+      placeholder: https://github.com/org/repo/pull/123
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      placeholder: Describe the error or unexpected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      render: shell

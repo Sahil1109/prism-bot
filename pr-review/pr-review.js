@@ -52,7 +52,7 @@ function fileDiffUrl(owner, repo, pullNumber, filename) {
   return `https://github.com/${owner}/${repo}/pull/${pullNumber}/files#diff-${hash}`;
 }
 
-function formatComment(result, prUrl, owner, repo, pullNumber) {
+function formatComment(result, owner, repo, pullNumber) {
   const scoreBar = '█'.repeat(Math.round(result.score / 10)) + '░'.repeat(10 - Math.round(result.score / 10));
   const sevEmoji = SEVERITY_EMOJI[result.severity] ?? '⚪';
   const aliEmoji = ALIGNMENT_EMOJI[result.business_alignment] ?? '❓';
@@ -111,7 +111,7 @@ function formatComment(result, prUrl, owner, repo, pullNumber) {
     );
   }
 
-  lines.push('', `---`, `${PRISM_SIGNATURE}(${PRISM_REPO_URL}) 🤖 • [View PR](${prUrl})*`);
+  lines.push('', `---`, `${PRISM_SIGNATURE}(${PRISM_REPO_URL}) 🤖 • [Share feedback](${PRISM_REPO_URL}/issues/new/choose)*`);
   return lines.join('\n');
 }
 
@@ -181,7 +181,7 @@ async function main() {
 
   if (commentFlag) {
     console.log('\nPosting comment to PR...');
-    const { url: commentUrl } = await postPRComment(owner, repo, pullNumber, formatComment(result, pr.url, owner, repo, pullNumber));
+    const { url: commentUrl } = await postPRComment(owner, repo, pullNumber, formatComment(result, owner, repo, pullNumber));
     console.log(`Comment posted: ${commentUrl}`);
   }
 

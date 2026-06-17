@@ -1,0 +1,32 @@
+name: Review Feedback
+description: The review score, severity, or summary seems wrong
+labels: ["feedback"]
+body:
+  - type: input
+    id: pr
+    attributes:
+      label: PR link
+      placeholder: https://github.com/org/repo/pull/123
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: What seems wrong?
+      options:
+        - Score too high
+        - Score too low
+        - Severity incorrect
+        - Business alignment incorrect
+        - Missing requirements inaccurate
+        - Code issues inaccurate
+        - Summary misleading
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      placeholder: What did PRism get wrong, and what should it have said?
+    validations:
+      required: true
