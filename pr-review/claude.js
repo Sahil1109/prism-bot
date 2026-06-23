@@ -153,11 +153,21 @@ const REVIEWER_GUIDANCE = `Reviewer ground rules:
 - Distinguish bugs (broken logic, real data loss) from style preferences (naming, comments). Style issues are low severity only.
 - Concurrency cancel-in-progress: acceptable for AI review jobs; only flag if the diff shows no cleanup mechanism exists.`;
 
+const PONYTAIL_GUIDANCE = `Over-engineering check (ponytail):
+- Flag changes that did not need to happen: speculative abstractions, interface with one implementation, config for a value that never changes, boilerplate "for later".
+- Flag hand-rolled code that stdlib or an already-installed dep covers. Name the replacement.
+- Flag reimplemented helpers or patterns that already exist in the codebase. Name the replacement.
+- Flag churn: renames, reformatting, or rewrites that add no behavior. Prefer the smallest diff that works.
+- Do NOT demand new abstractions, layers, or "robustness" the PR did not ask for. Reward deletion and simplicity.
+- Report these under code_issues, prefixed "over-engineering:". Severity low unless it adds real risk.`;
+
 function buildReviewPrompt(diffOrSummary, ticket) {
   if (!ticket) {
     return `You are a senior code reviewer. Review the following PR diff for code quality only. No Jira ticket — set business_alignment to "skipped".
 
 ${REVIEWER_GUIDANCE}
+
+${PONYTAIL_GUIDANCE}
 
 ${ROLLBACK_GUIDANCE}
 
@@ -170,6 +180,8 @@ ${diffOrSummary}`;
   return `You are a senior code reviewer. Review the following PR diff against the Jira ticket requirements.
 
 ${REVIEWER_GUIDANCE}
+
+${PONYTAIL_GUIDANCE}
 
 ${ROLLBACK_GUIDANCE}
 
